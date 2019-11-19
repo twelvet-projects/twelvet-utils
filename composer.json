@@ -12,6 +12,11 @@
         "email": "2471835953@qq.com",
         "homepage": "https://www.twelvet.cn"
     }],
+    "autoload": {
+        "psr-4": {
+            "twelvet\\utils\\": "src/"
+        }
+    },
     "require": {
         "php": ">=7.3"
     }
