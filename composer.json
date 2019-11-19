@@ -1,0 +1,21 @@
+{
+    "name": "twelvet/utils",
+    "description": "PHP辅助工具包.",
+    "keywords": [
+        "工具",
+        "开发辅助"
+    ],
+    "homepage": "https://github.com/twelvet-s/twelvet-utils",
+    "license": "Apache-2.0",
+    "authors": [{
+        "name": "TwelveT",
+        "email": "2471835953@qq.com",
+        "homepage": "https://www.twelvet.cn"
+    }],
+    "require": {
+        "php": ">=7.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.5"
+    }
+}
