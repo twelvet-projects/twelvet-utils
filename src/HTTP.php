@@ -42,12 +42,18 @@ class HTTP
         return $request;
     }
 
+
+    public static function download(String $url, array $params = [], array $options = [])
+    {
+        return '下载成功';
+    }
+
     /**
      * CURL发送Request请求,含POST和REQUEST
      * @param string $url     请求的链接
-     * @param mixed  $params  传递的参数
+     * @param mixed  $params  传递的请求参数
      * @param string $method  请求的方法
-     * @param mixed  $options CURL的参数
+     * @param mixed  $options CURL的设置参数
      * @return array
      */
     private static function request(String $url, array $params = [], String $method = 'POST', array $options = [])
@@ -173,7 +179,7 @@ class HTTP
         $fp = fsockopen($parts['host'], isset($parts['port']) ? $parts['port'] : 80, $errno, $errstr, 3);
         // 连接失败立即返回false
         if (!$fp)  return false;
-        
+
         //设置超时时间
         stream_set_timeout($fp, 3);
         // 设置头信息
