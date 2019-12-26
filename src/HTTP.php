@@ -2,6 +2,8 @@
 
 namespace twelvet\utils;
 
+use Exception;
+
 /**
  * ============================================================================
  * TwelveT
@@ -42,10 +44,38 @@ class HTTP
         return $request;
     }
 
-
-    public static function download(String $url, array $params = [], array $options = [])
+    /**
+     * 下载远程文件
+     *
+     * @param String $url       下载地址
+     * @param String $dir       保存目录
+     * @param String $dir       文件名称（包括后缀名称）
+     * @param array $params     下载请求参数
+     * @param String $method    请求方式
+     * @param array $options    扩展参数
+     * @return void
+     */
+    public static function download(String $url, String $dir, String $name, array $params = [], String $method = 'GET', array $options = [])
     {
-        return '下载成功';
+        try {
+            // 判断是否需要创建目录
+            if (!is_dir($dir)) mkdir($dir, 0755, true);
+            // 预定义文件名称
+            $tmpFile = $dir . $name;
+            // 请求远程数据
+            $result = self::request($url, $params, $method, $options);
+            // 请求过程中是否发送错误
+            if (!$result['status']) return ['status' => 0, 'msg' => $result['msg']];
+            // 开始写入文件
+            $write = fopen($tmpFile, 'w');
+            fwrite($write, $result['msg']);
+            fclose($write);
+            // 下载完成返回完整的文件路径
+            return ['statuc' => 1, 'msg' => $tmpFile];
+
+        } catch (Exception $e) {
+            return ['status' => 0, 'msg' => $e->getMessage()];
+        }
     }
 
     /**
