@@ -6,8 +6,7 @@ use Exception;
 
 /**
  * ============================================================================
- * TwelveT
- * 版权所有 twelvet.cn，并保留所有权利。
+ * TwelveT 工具箱
  * 官网地址:www.twelvet.cn
  * QQ:2471835953
  * ============================================================================
@@ -72,7 +71,6 @@ class HTTP
             fclose($write);
             // 下载完成返回完整的文件路径
             return ['statuc' => 1, 'msg' => $tmpFile];
-
         } catch (Exception $e) {
             return ['status' => 0, 'msg' => $e->getMessage()];
         }
