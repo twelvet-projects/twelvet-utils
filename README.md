@@ -4,7 +4,7 @@ php开发常用工具包
 ## 安装
 > composer require twelvet/utils
 
-# 核心工具描述
+# 工具箱描述
 
 ```
 HTTP：有关于http请求的相关操作
