@@ -13,6 +13,8 @@ use Exception;
  * HTTP工具
  */
 
+use twelvet\utils\exception\UtilsException;
+
 class HTTP
 {
     /**
@@ -63,16 +65,15 @@ class HTTP
             $tmpFile = $dir . $name;
             // 请求远程数据
             $result = self::request($url, $params, $method, $options);
-            // 请求过程中是否发送错误
-            if (!$result['status']) return ['status' => 0, 'msg' => $result['msg']];
             // 开始写入文件
             $write = fopen($tmpFile, 'w');
-            fwrite($write, $result['msg']);
+            fwrite($write, $result);
             fclose($write);
             // 下载完成返回完整的文件路径
-            return ['statuc' => 1, 'msg' => $tmpFile];
-        } catch (Exception $e) {
-            return ['status' => 0, 'msg' => $e->getMessage()];
+            return $tmpFile;
+        } catch (\Exception $e) {
+            // 抛出可能出现的文件不存在异常
+            throw new UtilsException($e->getMessage(), 500);
         }
     }
 
@@ -88,8 +89,6 @@ class HTTP
     {
         // 转换大写POST，GET
         $method = strtoupper($method);
-        // 获取地址协议
-        $protocol = substr($url, 0, 5);
         // 将数组参数转换为字符串参数
         $query_string = is_array($params) ? http_build_query($params) : $params;
         // 初始化curl
@@ -129,37 +128,34 @@ class HTTP
 
         // 禁用100-continue
         curl_setopt($CURL, CURLOPT_HTTPHEADER, array('Expect:'));
-        // 判断是否为https协议
-        if ($protocol == 'https') {
-            // 跳过证书检查
-            $curlParams[CURLOPT_SSL_VERIFYPEER] = false;
-            // 从证书中检查SSL加密算法是否存在
-            $curlParams[CURLOPT_SSL_VERIFYHOST] = false;
-        }
-        // 为cURL传输会话批量设置选项（合并数组，直接抛弃下标相同的后参数而不是覆盖）
+        // 跳过证书检查
+        $curlParams[CURLOPT_SSL_VERIFYPEER] = false;
+        // 从证书中检查SSL加密算法是否存在
+        $curlParams[CURLOPT_SSL_VERIFYHOST] = false;
+
+        // 为CURL传输会话批量设置选项（合并数组，直接抛弃下标相同的后参数而不是覆盖）
         curl_setopt_array($CURL, (array) $options + $curlParams);
         // 接受数据
         $result = curl_exec($CURL);
         // 获取错误信息
-        $err = curl_error($CURL);
+        $errInfo = curl_error($CURL);
         // 判断是否有错误
         if (false === $result || !empty($err)) {
-            // 获取最后一次错误信息
-            $errno = curl_errno($CURL);
+
+            // 获取错误号
+            // $errno = curl_errno($CURL);
+
             // 获取错误代码
-            $info = curl_getinfo($CURL);
+            $code = curl_getinfo($CURL, CURLINFO_HTTP_CODE);
             // 关闭资源
             curl_close($CURL);
-            return [
-                'status'   => false,
-                'errno' => $errno,
-                'msg'   => $err,
-                'info'  => $info,
-            ];
+
+            throw new UtilsException($errInfo, $code);
         }
         // 关闭
         curl_close($CURL);
-        return ['status' => true, 'msg' => $result];
+        // 返回结果
+        return $result;
     }
 
     /**
