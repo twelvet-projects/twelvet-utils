@@ -15,13 +15,6 @@ use twelvet\utils\entity\Facade;
 
 class Random extends Facade
 {
-    /**
-     * 获取当前Facade对应类名（或者已经绑定的容器对象标识）
-     *
-     * @return String
-     */
-    protected static function getFacadeClass()
-    {
-        return 'Random';
-    }
+    // 定义Facade类名称
+    protected static $class = 'Random';
 }

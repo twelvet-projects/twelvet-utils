@@ -15,5 +15,6 @@ use twelvet\utils\entity\Facade;
 
 class HTTP extends Facade
 {
+    // 定义Facade类名称
     protected static $class = 'HTTP';
 }
